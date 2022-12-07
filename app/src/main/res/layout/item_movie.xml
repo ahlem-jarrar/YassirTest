@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="movie"
+            type="com.yassir.moviesappyassir.ui.model.ViewMovieItem" />
+    </data>
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        app:cardCornerRadius="4dp"
+        app:cardElevation="4dp"
+        android:onClick="@{() -> movie.onClick()}"
+        >
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/black_transparent"
+            >
+
+            <com.yassir.moviesappyassir.utils.SquareImageView
+                android:id="@+id/imgPoster"
+                imageUrl="@{movie.imageUrl}"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
+                app:layout_constraintBottom_toBottomOf="@id/glBottom"
+                app:layout_constraintStart_toStartOf="@+id/glStart"
+                app:layout_constraintTop_toTopOf="@+id/glTop"
+                app:shapeAppearanceOverlay="@style/circle"
+                tools:srcCompat="@drawable/ic_launcher_background" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tvName"
+                style="@style/movieCardTextStyle"
+                android:text='@{@string/movie_title+movie.title}'
+                app:layout_constraintBottom_toTopOf="@+id/tvReleaseDate"
+                app:layout_constraintEnd_toEndOf="@id/glEnd"
+                app:layout_constraintStart_toEndOf="@id/imgPoster"
+                app:layout_constraintTop_toTopOf="@+id/imgPoster"
+                tools:text="Jhon Doe" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tvReleaseDate"
+                style="@style/movieCardTextStyle"
+                android:text="@{movie.releaseDate}"
+                app:layout_constraintBottom_toTopOf="@+id/tvOverview"
+                app:layout_constraintEnd_toEndOf="@id/glEnd"
+                app:layout_constraintStart_toEndOf="@id/imgPoster"
+                app:layout_constraintTop_toBottomOf="@+id/tvName"
+                tools:text="12-01-2000" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tvOverview"
+                style="@style/movieCardTextStyle"
+                android:text="@{movie.overview}"
+                app:layout_constraintBottom_toBottomOf="@+id/imgPoster"
+                app:layout_constraintEnd_toEndOf="@id/glEnd"
+                app:layout_constraintStart_toEndOf="@id/imgPoster"
+                app:layout_constraintTop_toBottomOf="@+id/tvReleaseDate"
+                tools:text="0532 123 12 12" />
+
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/glStart"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_begin="8dp" />
+
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/glEnd"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_end="8dp" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/glTop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_begin="8dp" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/glBottom"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_end="8dp" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+</layout>

@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Popular Movies</string>
+    <string name="error_message">No data to display. Please try again.</string>
+    <string name="movie_details_format">id: %1$d - created: %2$s</string>
+    <string name="retry">Retry</string>
+    <string name="movie_overview">Overview</string>
+    <string name="movie_title">Title : </string>
+</resources>
