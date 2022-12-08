@@ -9,20 +9,28 @@ import com.yassir.moviesappyassir.domain.Repository
 import com.yassir.moviesappyassir.domain.model.MoviesFilter
 import com.yassir.moviesappyassir.ui.mapper.toViewMovieItem
 import com.yassir.moviesappyassir.ui.model.ViewMovieItem
+import com.yassir.moviesappyassir.utils.StatusProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
 @HiltViewModel
-class MoviesListViewModel @Inject constructor(private val repository: Repository) : ViewModel() {
+class MoviesListViewModel @Inject constructor(
+    private val repository: Repository,
+    private val statusProvider: StatusProvider) : ViewModel() {
 
     private val _selectedMovieId: Channel<Int> = Channel()
     val selectedMovieId: Flow<Int> = _selectedMovieId.receiveAsFlow()
 
+    private val _isOffline: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val isOffline: StateFlow<Boolean> = _isOffline
+
     fun getTrendingMovies(filter: MoviesFilter? = null): Flow<PagingData<ViewMovieItem>> {
+
+        if (!statusProvider.isOnline()) {
+            _isOffline.value = true
+        }
         return repository.getTrendingMovies(filter)
             .map { pagingData ->
                 pagingData.map { movie ->

@@ -4,14 +4,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.yassir.moviesappyassir.R
 import com.yassir.moviesappyassir.databinding.FragmentMainBinding
-import com.yassir.moviesappyassir.ui.adapter.MovieLoadingAdapter
 import com.yassir.moviesappyassir.ui.adapter.MoviesListAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -28,9 +29,6 @@ class MoviesListFragment : Fragment() {
         MoviesListAdapter()
     }
 
-    private val header by lazy {
-        MovieLoadingAdapter { moviesAdapter.retry() }
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -39,6 +37,7 @@ class MoviesListFragment : Fragment() {
         _binding = FragmentMainBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = viewLifecycleOwner
         binding.viewModel = viewModel
+        initSwipeToRefresh()
         return binding.root
     }
 
@@ -47,9 +46,6 @@ class MoviesListFragment : Fragment() {
 
         binding.moviesList.apply {
             adapter = moviesAdapter
-            adapter = moviesAdapter.withLoadStateHeader(
-                header = header
-            )
             layoutManager = LinearLayoutManager(activity)
         }
 
@@ -72,18 +68,28 @@ class MoviesListFragment : Fragment() {
             moviesAdapter.loadStateFlow.collectLatest { loadStates ->
                 binding.refresh.isRefreshing = loadStates.refresh is LoadState.Loading
 
-                header.loadState = when (loadStates.refresh) {
-                    is LoadState.NotLoading -> loadStates.append
-                    else -> loadStates.refresh
-                }
             }
         }
+
+        lifecycleScope.launchWhenResumed {
+            viewModel.isOffline.collectLatest {
+                if (it) showOfflineMessage()
+            }
+        }
+    }
+
+    private fun showOfflineMessage() {
+        Toast.makeText(context, R.string.offline_app, Toast.LENGTH_SHORT).show()
     }
 
     private fun onMovieClicked(movieId: Int) {
         val action =
             MoviesListFragmentDirections.actionMovieListFragmentToMovieDetailsFragment((movieId))
         view?.findNavController()?.navigate(action)
+    }
+
+    private fun initSwipeToRefresh() {
+        binding.refresh.setOnRefreshListener { moviesAdapter.refresh() }
     }
 
     override fun onDestroyView() {
